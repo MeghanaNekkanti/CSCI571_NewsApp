@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">NewsApp</string>
+    <string name="title_home">Home</string>
+    <string name="title_headlines">Headlines</string>
+    <string name="title_trending">Trending</string>
+    <string name="title_bookmarks">Bookmarks</string>
+    <string name="enter">Enter Search Term :</string>
+    <string name="no_bookmark">No Bookmarked Articles</string>
+</resources>
