@@ -6,4 +6,7 @@
     <string name="title_bookmarks">Bookmarks</string>
     <string name="enter">Enter Search Term :</string>
     <string name="no_bookmark">No Bookmarked Articles</string>
+    <string name="text_location_permission">Allloww</string>
+    <string name="title_location_permission">Title</string>
+    <string name="ok">Allow</string>
 </resources>
