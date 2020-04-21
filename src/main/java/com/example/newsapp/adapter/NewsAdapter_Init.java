@@ -13,28 +13,22 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.newsapp.R;
-import com.squareup.picasso.Picasso;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.List;
 
-public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
+public class NewsAdapter_Init extends RecyclerView.Adapter<NewsAdapter_Init.ViewHolder> {
 
     private LayoutInflater layoutInflater;
     private List<String> data;
-    JSONArray news;
     Context context;
     String type = "";
 
-    public NewsAdapter(Context context, JSONArray news, String type) {
+    public NewsAdapter_Init(Context context, List<String> data, String type) {
         this.context = context;
         this.layoutInflater = LayoutInflater.from(context);
-        this.news = news;
+        this.data = data;
         this.type = type;
-        Log.d("Data length", String.valueOf(news.length()));
+        Log.d("Data length", String.valueOf(data.size()));
     }
 
     @NonNull
@@ -51,24 +45,10 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String title = "";
-        String url = "";
-        try {
-            JSONObject json = new JSONObject(news.get(position).toString());
-            Log.d("TAG", "onBindViewHolder: " + json.getString("sectionName"));
-            holder.textSection.setText(json.getString("sectionName"));
-            title = json.getString("webTitle");
-            holder.textTitle.setText(title);
-            JSONObject fields = json.getJSONObject("fields");
-            url = fields.getString("thumbnail");
-            Log.d("TAG", "onBindViewHolder: " + url);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        Picasso.with(context).load(url).resize(350, 350).into(holder.image);
 
-        final String finalTitle = title;
-        final String finalUrl = url;
+        final String heading = data.get(position);
+        holder.textTitle.setText(heading);
+
         holder.view.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -76,9 +56,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
                 // Include dialog.xml file
                 dialog.setContentView(R.layout.custom_dialog);
                 TextView text = dialog.findViewById(R.id.dialogTitle);
-                text.setText(finalTitle);
-                ImageView imageView = dialog.findViewById(R.id.dialogImage);
-                Picasso.with(context).load(finalUrl).resize(1000, 600).into(imageView);
+                text.setText(heading);
                 dialog.show();
                 return true;
             }
@@ -87,20 +65,18 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return news.length();
+        return data.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView textTitle, textSection, textTime;
+        TextView textTitle;
         ImageView image;
         View view;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             textTitle = itemView.findViewById(R.id.text_heading);
-            textSection = itemView.findViewById(R.id.text_section);
-            textTime = itemView.findViewById(R.id.text_time);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -113,6 +89,9 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
             image = itemView.findViewById(R.id.imageView);
             image.setEnabled(false);
             image.setOnClickListener(null);
+
         }
     }
+
+
 }

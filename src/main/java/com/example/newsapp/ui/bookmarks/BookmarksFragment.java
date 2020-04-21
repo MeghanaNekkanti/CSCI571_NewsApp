@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.newsapp.R;
-import com.example.newsapp.adapter.NewsAdapter;
+import com.example.newsapp.adapter.NewsAdapter_Init;
 
 import java.util.ArrayList;
 
@@ -23,7 +23,7 @@ import static android.widget.GridLayout.VERTICAL;
 public class BookmarksFragment extends Fragment {
 
     RecyclerView recyclerView;
-    NewsAdapter newsAdapter;
+    NewsAdapter_Init newsAdapterInit;
     ArrayList<String> items;
     TextView textView;
 
@@ -48,8 +48,8 @@ public class BookmarksFragment extends Fragment {
             recyclerView = root.findViewById(R.id.recyclerViewBookmark);
             recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
             recyclerView.addItemDecoration(itemDecor);
-            newsAdapter = new NewsAdapter(getActivity(), items, "Bookmark");
-            recyclerView.setAdapter(newsAdapter);
+            newsAdapterInit = new NewsAdapter_Init(getActivity(), items, "Bookmark");
+            recyclerView.setAdapter(newsAdapterInit);
         }
         return root;
     }

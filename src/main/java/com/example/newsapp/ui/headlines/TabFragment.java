@@ -1,6 +1,7 @@
 package com.example.newsapp.ui.headlines;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.newsapp.R;
-import com.example.newsapp.adapter.NewsAdapter;
+import com.example.newsapp.adapter.NewsAdapter_Init;
 
 import java.util.ArrayList;
 
@@ -25,10 +26,12 @@ public class TabFragment extends Fragment {
     int position;
     private TextView textView;
     RecyclerView recyclerView;
-    NewsAdapter newsAdapter;
+    NewsAdapter_Init newsAdapterInit;
     ArrayList<String> items;
 
     public static Fragment getInstance(int position) {
+        Log.d("TAG", "onCreate: "+position);
+
         Bundle bundle = new Bundle();
         bundle.putInt("pos", position);
         TabFragment tabFragment = new TabFragment();
@@ -59,8 +62,8 @@ public class TabFragment extends Fragment {
         recyclerView = root.findViewById(R.id.recyclerViewTab);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.addItemDecoration(itemDecor);
-        newsAdapter = new NewsAdapter(getActivity(), items, "Headlines");
-        recyclerView.setAdapter(newsAdapter);
+        newsAdapterInit = new NewsAdapter_Init(getActivity(), items, "Headlines");
+        recyclerView.setAdapter(newsAdapterInit);
         return root;
     }
 
