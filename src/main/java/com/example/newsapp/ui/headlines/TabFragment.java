@@ -5,16 +5,26 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.newsapp.R;
-import com.example.newsapp.adapter.NewsAdapter_Init;
+import com.example.newsapp.adapter.NewsAdapter;
+
+import org.json.JSONArray;
 
 import java.util.ArrayList;
 
@@ -24,55 +34,87 @@ import static androidx.recyclerview.widget.RecyclerView.VERTICAL;
 public class TabFragment extends Fragment {
 
     int position;
-    private TextView textView;
-    RecyclerView recyclerView;
-    NewsAdapter_Init newsAdapterInit;
-    ArrayList<String> items;
+    View root;
 
-    public static Fragment getInstance(int position) {
-        Log.d("TAG", "onCreate: "+position);
-
-        Bundle bundle = new Bundle();
-        bundle.putInt("pos", position);
-        TabFragment tabFragment = new TabFragment();
-        tabFragment.setArguments(bundle);
-        return tabFragment;
+    public TabFragment(int position) {
+        this.position = position;
+        Log.d("TAG", "TabFragment: " + position);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        items = new ArrayList<>();
-        items.add("First");
-        items.add("Second");
-        items.add("Third");
-        items.add("Four");
-        items.add("Five");
-        items.add("Six");
-        position = getArguments().getInt("pos");
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View root = inflater.inflate(R.layout.fragment_tab, container, false);
-        DividerItemDecoration itemDecor = new DividerItemDecoration(getContext(), HORIZONTAL);
-        itemDecor.setOrientation(VERTICAL);
-        recyclerView = root.findViewById(R.id.recyclerViewTab);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.addItemDecoration(itemDecor);
-        newsAdapterInit = new NewsAdapter_Init(getActivity(), items, "Headlines");
-        recyclerView.setAdapter(newsAdapterInit);
+        root = inflater.inflate(R.layout.fragment_tab, container, false);
         return root;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-//        textView = view.findViewById(R.id.textView);
-//
-//        textView.setText("Fragment " + (position + 1));
+        Log.d("TAG", "onViewCreated: " + position);
+        switch (position) {
+            case 0:
+                displaySectionNews("world", view, getActivity());
+                break;
+            case 1:
+                displaySectionNews("business", view, getActivity());
+                break;
+            case 2:
+                displaySectionNews("politics", view, getActivity());
+                break;
+            case 3:
+                displaySectionNews("sport", view, getActivity());
+                break;
+            case 4:
+                displaySectionNews("technology", view, getActivity());
+                break;
+            case 5:
+                displaySectionNews("science", view, getActivity());
+                break;
 
+        }
+    }
+
+    private void displaySectionNews(final String section, final View view, final FragmentActivity activity) {
+
+        RequestQueue requestQueue = Volley.newRequestQueue(activity);
+        final ProgressBar progressBar = view.findViewById(R.id.progressBarTab);
+        final TextView textView = view.findViewById(R.id.fetching);
+        textView.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
+        String url = "http://10.0.2.2:5000/guardiansection?section=" + section;
+        Log.d("TAG", "displaySectionNews: " + section);
+        final JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+//                        Log.d("TAG", "onResponse: " + response);
+                        progressBar.setVisibility(View.GONE);
+                        textView.setVisibility(View.VISIBLE);
+                        DividerItemDecoration itemDecor = new DividerItemDecoration(activity, HORIZONTAL);
+                        itemDecor.setOrientation(VERTICAL);
+                        RecyclerView recyclerView = view.findViewById(R.id.recyclerViewTab);
+                        recyclerView.setLayoutManager(new LinearLayoutManager(activity));
+                        NewsAdapter newsAdapter = new NewsAdapter(activity, response, "TAB");
+                        recyclerView.addItemDecoration(itemDecor);
+                        recyclerView.setAdapter(newsAdapter);
+//                        newsAdapter.notifyDataSetChanged();
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressBar.setVisibility(View.GONE);
+                textView.setVisibility(View.GONE);
+                Log.e("Volley", "Error" + error);
+            }
+        });
+        requestQueue.add(request);
     }
 }

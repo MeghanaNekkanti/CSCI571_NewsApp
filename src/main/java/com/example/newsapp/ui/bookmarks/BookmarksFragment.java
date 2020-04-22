@@ -9,11 +9,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.newsapp.R;
-import com.example.newsapp.adapter.NewsAdapter_Init;
+import com.example.newsapp.adapter.NewsAdapter;
 
 import java.util.ArrayList;
 
@@ -23,7 +22,7 @@ import static android.widget.GridLayout.VERTICAL;
 public class BookmarksFragment extends Fragment {
 
     RecyclerView recyclerView;
-    NewsAdapter_Init newsAdapterInit;
+    NewsAdapter newsAdapterInit;
     ArrayList<String> items;
     TextView textView;
 
@@ -45,11 +44,11 @@ public class BookmarksFragment extends Fragment {
             root = inflater.inflate(R.layout.fragment_bookmarks, container, false);
             DividerItemDecoration itemDecor = new DividerItemDecoration(getContext(), HORIZONTAL);
             itemDecor.setOrientation(VERTICAL);
-            recyclerView = root.findViewById(R.id.recyclerViewBookmark);
-            recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-            recyclerView.addItemDecoration(itemDecor);
-            newsAdapterInit = new NewsAdapter_Init(getActivity(), items, "Bookmark");
-            recyclerView.setAdapter(newsAdapterInit);
+//            recyclerView = root.findViewById(R.id.recyclerViewBookmark);
+//            recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+//            recyclerView.addItemDecoration(itemDecor);
+//            newsAdapterInit = new NewsAdapter_Init(getActivity(), items, "Bookmark");
+//            recyclerView.setAdapter(newsAdapterInit);
         }
         return root;
     }

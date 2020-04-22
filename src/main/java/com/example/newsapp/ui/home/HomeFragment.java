@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,7 +40,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -57,9 +57,7 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_home, container, false);
-        Log.d("TAG", "onCreateView: " + "loc");
         if (savedInstanceState == null)
-            Log.d("TAG", "onCreateView: " + "null");
         root.findViewById(R.id.weather_card).setVisibility(View.GONE);
         requestLocationPermission();
         return root;
@@ -68,7 +66,6 @@ public class HomeFragment extends Fragment {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
 
@@ -93,16 +90,17 @@ public class HomeFragment extends Fragment {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, (LocationListener) getActivity());
             Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             RequestQueue queue = Volley.newRequestQueue(getActivity());
+            final TextView textView = root.findViewById(R.id.fetching);
+            ProgressBar progressBar = root.findViewById(R.id.progressBar);
 
-            updateWeatherCard(location, queue);
+            updateWeatherCard(location, queue, textView, progressBar);
 
         } else {
             EasyPermissions.requestPermissions(this, "Please grant the location permission", REQUEST_LOCATION_PERMISSION, perms);
         }
     }
 
-    private void updateNewsList(RequestQueue queue) {
-        Log.d("TAG", "updateNewsList: " + queue);
+    private void updateNewsList(RequestQueue queue, final TextView textView, final ProgressBar progressBar) {
 
         String url = "http://10.0.2.2:5000/guardianlatestnews";
         final JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
@@ -110,43 +108,37 @@ public class HomeFragment extends Fragment {
                     @Override
                     public void onResponse(JSONArray response) {
                         Log.d("TAG", "onResponse: " + response);
-
                         DividerItemDecoration itemDecor = new DividerItemDecoration(getActivity(), HORIZONTAL);
                         itemDecor.setOrientation(VERTICAL);
                         RecyclerView recyclerView = root.findViewById(R.id.recyclerView);
                         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-                        NewsAdapter newsAdapter = new NewsAdapter(getActivity(), response, "Home");
+                        NewsAdapter newsAdapter = new NewsAdapter(getActivity(), response, "HOME");
                         recyclerView.addItemDecoration(itemDecor);
                         recyclerView.setAdapter(newsAdapter);
+                        progressBar.setVisibility(View.GONE);
+                        textView.setVisibility(View.GONE);
+
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                progressBar.setVisibility(View.GONE);
+                textView.setVisibility(View.GONE);
                 Log.e("Volley", "Error" + error);
             }
         });
 
         queue.add(request);
-
-        ArrayList<String> items = new ArrayList<>();
-        items.add("First");
-        items.add("Second");
-        items.add("Third");
-        items.add("Four");
-        items.add("Five");
-        items.add("Six");
-
         root.findViewById(R.id.weather_card).setVisibility(View.VISIBLE);
     }
 
-    private void updateWeatherCard(Location location, final RequestQueue queue) {
-        Log.d("TAG", "onLocationChanged: " + location.getLatitude() + " " + location.getLongitude());
-
+    private void updateWeatherCard(Location location, final RequestQueue queue, final TextView textView, final ProgressBar progressBar) {
+        progressBar.setVisibility(View.VISIBLE);
+        textView.setVisibility(View.VISIBLE);
         Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());
         List<Address> addresses = null;
         try {
             addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-            Log.d("TAG", "onResume: " + addresses);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -200,7 +192,7 @@ public class HomeFragment extends Fragment {
                                     back.setBackground(getResources().getDrawable(R.drawable.sunny_weather));
                                     break;
                             }
-                            updateNewsList(queue);
+                            updateNewsList(queue, textView, progressBar);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -209,7 +201,7 @@ public class HomeFragment extends Fragment {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("Volley", "Error");
+                Log.e("Volley", "Error" + error);
             }
         });
         queue.add(jsonRequest);

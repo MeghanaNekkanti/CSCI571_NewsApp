@@ -19,12 +19,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.List;
-
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
     private LayoutInflater layoutInflater;
-    private List<String> data;
     JSONArray news;
     Context context;
     String type = "";
@@ -51,6 +48,50 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        if (type == "HOME")
+            loadHomeData(holder, position);
+        else if (type == "TAB")
+            loadSectionData(holder, position);
+    }
+
+    private void loadSectionData(ViewHolder holder, int position) {
+
+        String title = "";
+        String url = "";
+        try {
+            JSONObject json = new JSONObject(news.get(position).toString());
+            Log.d("TAG", "onBindViewHolder: " + json.getString("sectionId"));
+            holder.textSection.setText(json.getString("sectionId"));
+            title = json.getString("webTitle");
+            holder.textTitle.setText(title);
+            url = json.getString("imageUrl");
+            if (url.equals(""))
+                url = "https://assets.guim.co.uk/images/eada8aa27c12fe2d5afa3a89d3fbae0d/fallback-logo.png";
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Picasso.with(context).load(url).resize(350, 350).into(holder.image);
+
+        final String finalTitle = title;
+        final String finalUrl = url;
+        holder.view.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                final Dialog dialog = new Dialog(context);
+                dialog.setContentView(R.layout.custom_dialog);
+                TextView text = dialog.findViewById(R.id.dialogTitle);
+                text.setText(finalTitle);
+                ImageView imageView = dialog.findViewById(R.id.dialogImage);
+                Picasso.with(context).load(finalUrl).resize(1000, 600).into(imageView);
+                dialog.show();
+                return true;
+            }
+        });
+    }
+
+    private void loadHomeData(ViewHolder holder, int position) {
+
         String title = "";
         String url = "";
         try {
@@ -60,11 +101,16 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
             title = json.getString("webTitle");
             holder.textTitle.setText(title);
             JSONObject fields = json.getJSONObject("fields");
-            url = fields.getString("thumbnail");
+            if (fields.has("thumbnail"))
+                url = fields.getString("thumbnail");
+            if (url.equals(""))
+                url = "https://assets.guim.co.uk/images/eada8aa27c12fe2d5afa3a89d3fbae0d/fallback-logo.png";
+
             Log.d("TAG", "onBindViewHolder: " + url);
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
         Picasso.with(context).load(url).resize(350, 350).into(holder.image);
 
         final String finalTitle = title;
@@ -107,9 +153,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
                 }
             });
-
             view = itemView;
-
             image = itemView.findViewById(R.id.imageView);
             image.setEnabled(false);
             image.setOnClickListener(null);
