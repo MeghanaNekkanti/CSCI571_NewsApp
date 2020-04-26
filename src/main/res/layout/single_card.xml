@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginVertical="4dp">
+    android:layout_marginVertical="6dp">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
@@ -33,6 +33,12 @@
                 android:id="@+id/text_heading"
                 android:layout_width="240dp"
                 android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="3"
+                android:scrollHorizontally="true"
+                android:textColor="#000"
+                android:textSize="18sp"
+                android:textStyle="bold"
                 app:layout_constraintStart_toEndOf="@+id/imageView"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -43,6 +49,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
                 android:background="#fff"
+                android:tint="#ff0000"
                 app:layout_constraintStart_toEndOf="@+id/text_heading"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/baseline_bookmark_border_black_24dp" />

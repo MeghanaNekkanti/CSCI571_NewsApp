@@ -18,8 +18,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/colorAccent">
+            android:layout_height="match_parent">
 
             <ImageView
                 android:id="@+id/imageView"
@@ -35,6 +34,9 @@
                 android:id="@+id/text_heading"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:ellipsize="end"
+                android:maxLines="3"
+                android:scrollHorizontally="true"
                 android:text="TextView"
                 app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
@@ -45,10 +47,10 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
                 android:background="#fff"
+                android:tint="#ff0000"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-
-                app:srcCompat="@drawable/baseline_bookmark_border_black_24dp" />
+                app:srcCompat="@drawable/baseline_bookmark_black_24dp" />
 
             <TextView
                 android:id="@+id/text_time"
