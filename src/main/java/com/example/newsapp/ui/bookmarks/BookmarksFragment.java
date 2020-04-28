@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.newsapp.R;
+import com.example.newsapp.adapter.BookmarkAdapter;
 import com.example.newsapp.adapter.NewsAdapter;
 import com.google.gson.JsonObject;
 
@@ -32,20 +33,14 @@ import static android.widget.GridLayout.VERTICAL;
 public class BookmarksFragment extends Fragment {
 
     RecyclerView recyclerView;
-    NewsAdapter newsAdapterInit;
+    BookmarkAdapter newsAdapter;
     ArrayList<String> items;
     TextView textView;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root;
-        items = new ArrayList<>();
-        items.add("First");
-        items.add("Second");
-        items.add("Third");
-        items.add("Four");
-        items.add("Five");
-//        items.add("Six");
+
         SharedPreferences shref;
         SharedPreferences.Editor editor;
         shref = getContext().getSharedPreferences("Bookmarks", Context.MODE_PRIVATE);
@@ -60,21 +55,34 @@ public class BookmarksFragment extends Fragment {
             }
             Log.d("map values", String.valueOf(news));
         }
-        if (news.length() == 0) {
-            root = inflater.inflate(R.layout.empty_bookmark, container, false);
-            textView = root.findViewById(R.id.text_no_bookmark);
-            textView.setText(R.string.no_bookmark);
-        } else {
-            root = inflater.inflate(R.layout.fragment_bookmarks, container, false);
-            DividerItemDecoration itemDecor = new DividerItemDecoration(getContext(), HORIZONTAL);
-            itemDecor.setOrientation(VERTICAL);
-            recyclerView = root.findViewById(R.id.recyclerViewBookmark);
-            recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-            recyclerView.addItemDecoration(itemDecor);
-            newsAdapterInit = new NewsAdapter(getActivity(), news, "BOOKMARK");
-            recyclerView.setAdapter(newsAdapterInit);
-            newsAdapterInit.notifyDataSetChanged();
-        }
+//        if (news.length() == 0) {
+//            root = inflater.inflate(R.layout.empty_bookmark, container, false);
+//            textView = root.findViewById(R.id.text_no_bookmark);
+//            textView.setText(R.string.no_bookmark);
+//        } else {
+        root = inflater.inflate(R.layout.fragment_bookmarks, container, false);
+        DividerItemDecoration itemDecor = new DividerItemDecoration(getContext(), HORIZONTAL);
+        itemDecor.setOrientation(VERTICAL);
+        recyclerView = root.findViewById(R.id.recyclerViewBookmark);
+        GridLayoutManager mLayoutManager = new GridLayoutManager(getActivity(), 2);
+        mLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+//                Log.d("TAG", "getSpanSize: " + newsAdapter.getItemViewType(position));
+                switch (newsAdapter.getItemViewType(position)) {
+                    case 0:
+                        return 2;
+                    case 1:
+                        return 1;
+                }
+                return 1;
+            }
+        });
+        recyclerView.setLayoutManager(mLayoutManager);
+
+        recyclerView.addItemDecoration(itemDecor);
+        newsAdapter = new BookmarkAdapter(getActivity(), news);
+        recyclerView.setAdapter(newsAdapter);
         return root;
     }
 }

@@ -18,54 +18,60 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.newsapp.R;
 import com.example.newsapp.model.NewsClass;
-import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
+public class BookmarkAdapter extends RecyclerView.Adapter {
 
     private LayoutInflater layoutInflater;
     JSONArray news;
     Context context;
-    String type = "";
 
-    public NewsAdapter(Context context, JSONArray news, String type) {
+    public BookmarkAdapter(Context context, JSONArray news) {
         this.context = context;
         this.layoutInflater = LayoutInflater.from(context);
         this.news = news;
-        this.type = type;
         Log.d("Data length", String.valueOf(news.length()));
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
-        view = layoutInflater.inflate(R.layout.single_card, parent, false);
-        return new ViewHolder(view);
+        switch (viewType) {
+            case 0:
+                view = layoutInflater.inflate(R.layout.empty_bookmark, parent, false);
+                return new EmptyViewHolder(view);
+            case 1:
+                view = layoutInflater.inflate(R.layout.bookmark_card, parent, false);
+                return new ViewHolder(view);
+        }
+        return null;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        if (type.equals("HOME"))
-            loadHomeData(holder, position);
-        else if (type.equals("TAB"))
-            loadSectionData(holder, position);
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        if (news.length() == 0) {
+            Log.d("TAG", "onBindViewHolder: Empty");
+        } else {
+            loadBookmarkData((ViewHolder) holder, position);
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private void loadSectionData(final ViewHolder holder, final int position) {
+    private void loadBookmarkData(final ViewHolder holder, final int position) {
 
         final NewsClass newsClass = new NewsClass();
+        Log.d("TAG", "loadBookmark: " + news);
 
         String url = "";
         try {
             JSONObject json = new JSONObject(news.get(position).toString());
-            Log.d("TAG", "loadSectionData: " + json);
+            Log.d("TAG", "loadBookmark: " + json);
             url = json.getString("imageUrl");
             if (url.equals(""))
                 url = "https://assets.guim.co.uk/images/eada8aa27c12fe2d5afa3a89d3fbae0d/fallback-logo.png";
@@ -74,17 +80,16 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
             newsClass.setId(json.getString("id"));
             newsClass.setSectionId(json.getString("sectionId"));
             newsClass.setWebTitle(json.getString("webTitle"));
-            Log.d("TAG", "onBindViewHolder: " + json.getString("sectionId"));
-//            newsArray.add(new NewsClass());
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
         holder.textSection.setText(newsClass.getSectionId());
         holder.textTitle.setText(newsClass.getWebTitle());
-        String time = NewsClass.convertDate(newsClass.getWebPublicationDate(), "NEWS");
+        String time = NewsClass.convertDate(newsClass.getWebPublicationDate(), "BOOKMARK");
         holder.textTime.setText(time);
-        Picasso.with(context).load(newsClass.getImageUrl()).resize(350, 350).into(holder.image);
+
+        Picasso.with(context).load(newsClass.getImageUrl()).resize(0, 500).into(holder.image);
+
         Boolean exists = NewsClass.checkBookmark(newsClass, context);
         if (exists) {
             holder.buttonBookmark.setImageResource(R.drawable.baseline_bookmark_black_24dp);
@@ -95,7 +100,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         holder.view.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                NewsClass.showDialog(newsClass, context, NewsAdapter.this, null, 0);
+                NewsClass.showDialog(newsClass, context, BookmarkAdapter.this, news, position);
                 return true;
             }
         });
@@ -105,79 +110,41 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
             @Override
             public void onClick(View v) {
 //                ArrayList<NewsClass> newsArray = new ArrayList<>();
-                NewsClass.handleStorage(newsClass, context);
+                Boolean check = NewsClass.handleStorage(newsClass, context);
+                if (check) {
+                    holder.buttonBookmark.setImageResource(R.drawable.baseline_bookmark_border_black_24dp);
+                    news.remove(position);
+                    notifyDataSetChanged();
+                    notifyItemRemoved(position);
+                }
                 notifyDataSetChanged();
             }
         });
-    }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    private void loadHomeData(final ViewHolder holder, int position) {
-
-        final NewsClass newsClass = new NewsClass();
-
-        String url = "";
-        try {
-            JSONObject json = new JSONObject(news.get(position).toString());
-            JSONObject fields = json.getJSONObject("fields");
-
-            if (fields.has("thumbnail"))
-                url = fields.getString("thumbnail");
-            if (url.equals(""))
-                url = "https://assets.guim.co.uk/images/eada8aa27c12fe2d5afa3a89d3fbae0d/fallback-logo.png";
-
-            newsClass.setImageUrl(url);
-            newsClass.setWebPublicationDate(json.getString("webPublicationDate"));
-            newsClass.setId(json.getString("id"));
-            newsClass.setSectionId(json.getString("sectionName"));
-            newsClass.setWebTitle(json.getString("webTitle"));
-
-            Log.d("TAG", "onBindViewHolder: " + json.getString("id"));
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        holder.textSection.setText(newsClass.getSectionId());
-        holder.textTitle.setText(newsClass.getWebTitle());
-        String time = NewsClass.convertDate(newsClass.getWebPublicationDate(), "NEWS");
-        holder.textTime.setText(time);
-        holder.textTime.setText(time);
-        Picasso.with(context).load(newsClass.getImageUrl()).resize(350, 350).into(holder.image);
-
-
-        Boolean exists = NewsClass.checkBookmark(newsClass, context);
-        if (exists) {
-            holder.buttonBookmark.setImageResource(R.drawable.baseline_bookmark_black_24dp);
-        } else {
-            holder.buttonBookmark.setImageResource(R.drawable.baseline_bookmark_border_black_24dp);
-        }
-
-        holder.view.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                NewsClass.showDialog(newsClass, context, NewsAdapter.this, null, 0);
-                return true;
-            }
-        });
-        // bookmark button on click
-        holder.buttonBookmark.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NewsClass.handleStorage(newsClass, context);
-                notifyDataSetChanged();
-            }
-        });
     }
 
     @Override
     public int getItemCount() {
+        if (news.length() == 0)
+            return 1;
         return news.length();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+
+        int b = news.length();
+        Log.d("TAG", "getItemViewType: " + b);
+        if (b == 0) {
+            return 0;
+        } else {
+            return 1;
+        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView textTitle, textSection, textTime, noBookmark;
+        TextView textTitle, textSection, textTime;
         ImageView image;
         View view;
         ImageButton buttonBookmark;
@@ -201,4 +168,16 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
             image.setOnClickListener(null);
         }
     }
+
+    public static class EmptyViewHolder extends RecyclerView.ViewHolder {
+
+        TextView noBookmark;
+
+        public EmptyViewHolder(View itemView) {
+            super(itemView);
+            noBookmark = itemView.findViewById(R.id.text_no_bookmark);
+        }
+    }
 }
+
+

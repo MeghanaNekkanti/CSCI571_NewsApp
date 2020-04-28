@@ -2,14 +2,15 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="280dp"
-    android:layout_height="280dp">
+    android:layout_width="320dp"
+    android:layout_height="wrap_content">
 
 
     <ImageView
         android:id="@+id/dialogImage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:scaleType="fitXY"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -20,16 +21,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TextView"
+        android:textColor="#000"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:paddingVertical="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/dialogImage" />
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/twitter"
-        android:layout_width="205dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/borderline"
-        android:gravity="center_horizontal"
-        app:layout_constraintRight_toLeftOf="@id/bookmark"
+        android:paddingHorizontal="56dp"
+        android:paddingTop="5dp"
+        app:layout_constraintEnd_toStartOf="@id/bookmark"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/dialogTitle">
 
@@ -37,17 +43,27 @@
             android:id="@+id/dialogTwitter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@android:drawable/btn_star_big_on" />
-    </LinearLayout>
+            android:adjustViewBounds="true"
+            android:maxWidth="50dp"
+            android:background="#fff"
+            android:maxHeight="50dp"
+            android:scaleType="fitCenter"
+            android:gravity="center_horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/bluetwitter" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/bookmark"
-        android:layout_width="205dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/borderline"
         android:gravity="center_horizontal"
+        android:paddingHorizontal="56dp"
+        android:paddingTop="5dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/twitter"
         app:layout_constraintStart_toEndOf="@id/twitter"
         app:layout_constraintTop_toBottomOf="@id/dialogTitle">
 
@@ -55,6 +71,12 @@
             android:id="@+id/dialogBookmark"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/baseline_bookmark_border_black_24dp" />
-    </LinearLayout>
+            android:background="#FFF"
+            android:gravity="center_horizontal"
+            android:tint="#ff0000"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/baseline_bookmark_border_black_24dp_2x" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

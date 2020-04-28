@@ -23,7 +23,8 @@
             <ImageView
                 android:id="@+id/imageView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="fitXY"
                 android:src="@drawable/ic_launcher_foreground"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -38,7 +39,8 @@
                 android:maxLines="3"
                 android:scrollHorizontally="true"
                 android:text="TextView"
-                app:layout_constraintTop_toBottomOf="@+id/imageView" />
+                app:layout_constraintTop_toBottomOf="@+id/imageView"
+                app:layout_constraintBottom_toTopOf="@id/text_section"/>
 
             <ImageButton
                 android:id="@+id/bookmarkButton"
@@ -49,6 +51,7 @@
                 android:background="#fff"
                 android:tint="#ff0000"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_heading"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:srcCompat="@drawable/baseline_bookmark_black_24dp" />
 
@@ -68,8 +71,8 @@
                 android:id="@+id/text_line"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="7dp"
-                android:layout_marginLeft="7dp"
+                android:layout_marginStart="3dp"
+                android:layout_marginLeft="3dp"
                 android:layout_marginBottom="9dp"
                 android:text="|"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -78,12 +81,15 @@
 
             <TextView
                 android:id="@+id/text_section"
-                android:layout_width="wrap_content"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="7dp"
-                android:layout_marginLeft="7dp"
+                android:layout_marginStart="3dp"
+                android:layout_marginLeft="3dp"
                 android:layout_marginBottom="9dp"
                 android:text="Section"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:scrollHorizontally="true"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/text_line"
                 app:layout_constraintTop_toBottomOf="@+id/text_heading" />
