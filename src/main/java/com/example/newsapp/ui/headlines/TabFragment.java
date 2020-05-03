@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -25,8 +26,8 @@ import com.example.newsapp.R;
 import com.example.newsapp.adapter.NewsAdapter;
 
 import org.json.JSONArray;
-
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static androidx.recyclerview.widget.RecyclerView.HORIZONTAL;
 import static androidx.recyclerview.widget.RecyclerView.VERTICAL;
@@ -35,6 +36,10 @@ public class TabFragment extends Fragment {
 
     int position;
     View root;
+    private TextView textView;
+    private ProgressBar progressBar;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    List<String> sections = Arrays.asList("world", "business", "politics", "sport", "technology", "science");
 
     public TabFragment(int position) {
         this.position = position;
@@ -44,7 +49,6 @@ public class TabFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -52,43 +56,33 @@ public class TabFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         root = inflater.inflate(R.layout.fragment_tab, container, false);
+        mSwipeRefreshLayout = root.findViewById(R.id.swipe_refresh_items);
+        textView = root.findViewById(R.id.fetching);
+        progressBar = root.findViewById(R.id.progressBarTab);
+        textView.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
+        Log.d("TAG", "onCreateView: position " + position + " " + sections.get(position));
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Log.d("TAG", "onRefresh: "+position);
+                displaySectionNews(sections.get(position), root, getActivity());
+            }
+        });
+        displaySectionNews(sections.get(position), root, getActivity());
         return root;
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d("TAG", "onViewCreated: " + position);
-        switch (position) {
-            case 0:
-                displaySectionNews("world", view, getActivity());
-                break;
-            case 1:
-                displaySectionNews("business", view, getActivity());
-                break;
-            case 2:
-                displaySectionNews("politics", view, getActivity());
-                break;
-            case 3:
-                displaySectionNews("sport", view, getActivity());
-                break;
-            case 4:
-                displaySectionNews("technology", view, getActivity());
-                break;
-            case 5:
-                displaySectionNews("science", view, getActivity());
-                break;
-
-        }
     }
 
     private void displaySectionNews(final String section, final View view, final FragmentActivity activity) {
 
         RequestQueue requestQueue = Volley.newRequestQueue(activity);
-        final ProgressBar progressBar = view.findViewById(R.id.progressBarTab);
-        final TextView textView = view.findViewById(R.id.fetching);
-        textView.setVisibility(View.VISIBLE);
-        progressBar.setVisibility(View.VISIBLE);
+
         String url = "http://10.0.2.2:5000/guardiansection?section=" + section;
         Log.d("TAG", "displaySectionNews: " + section);
         final JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
@@ -97,7 +91,7 @@ public class TabFragment extends Fragment {
                     public void onResponse(JSONArray response) {
 //                        Log.d("TAG", "onResponse: " + response);
                         progressBar.setVisibility(View.GONE);
-                        textView.setVisibility(View.VISIBLE);
+                        textView.setVisibility(View.GONE);
                         DividerItemDecoration itemDecor = new DividerItemDecoration(activity, HORIZONTAL);
                         itemDecor.setOrientation(VERTICAL);
                         RecyclerView recyclerView = view.findViewById(R.id.recyclerViewTab);
@@ -116,5 +110,6 @@ public class TabFragment extends Fragment {
             }
         });
         requestQueue.add(request);
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 }

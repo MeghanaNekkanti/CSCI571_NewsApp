@@ -2,13 +2,16 @@ package com.example.newsapp.model;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,10 +31,11 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class NewsClass {
-    String webTitle;
-    String id;
-    String imageUrl;
-    String sectionId;
+    private String webTitle;
+    private String id;
+    private String imageUrl;
+    private String sectionId;
+    private String webPublicationDate;
 
     public String getWebTitle() {
         return webTitle;
@@ -73,9 +77,6 @@ public class NewsClass {
         this.webPublicationDate = webPublicationDate;
     }
 
-    String webPublicationDate;
-
-
     @RequiresApi(api = Build.VERSION_CODES.O)
     public static String convertDate(String webPublicationDate, String type) {
         String timeText = "";
@@ -96,7 +97,7 @@ public class NewsClass {
             int minutes = (int) ((diff.getSeconds() % (60 * 60)) / 60);
             int seconds = (int) (diff.getSeconds() % 60);
             long hours = diff.toHours();
-//        Log.d("TAG", "convertDate: " + diff + " " + hours + " " + minutes + " " + seconds);
+            Log.d("TAG", "convertDate: " + diff + " " + hours + " " + minutes + " " + seconds);
             if (hours >= 1)
                 timeText = hours + "h ago";
             else if (minutes >= 1 && hours < 1)
@@ -109,7 +110,6 @@ public class NewsClass {
 
     public static Boolean handleStorage(NewsClass newsClass, Context context) {
 
-        String json = null;
         String key = newsClass.getId();
         SharedPreferences s_href;
         SharedPreferences.Editor editor;
@@ -117,18 +117,17 @@ public class NewsClass {
         Gson gson = new Gson();
         String response = s_href.getString(key, "");
         editor = s_href.edit();
-        json = gson.toJson(newsClass);
+        String json = gson.toJson(newsClass);
         if (response.equals("")) {
-//            buttonBookmark.setImageResource(R.drawable.baseline_bookmark_black_24dp);
             editor.putString(key, json);
             editor.apply();
+            showToast(context, "\"" + newsClass.getWebTitle() + "\"" + " was added to Bookmarks");
             return false;
         } else {
-//            buttonBookmark.setImageResource(R.drawable.baseline_bookmark_border_black_24dp);
             editor.remove(key).apply();
+            showToast(context, "\"" + newsClass.getWebTitle() + "\"" + " was removed from Bookmarks");
             return true;
         }
-//        Log.d("TAG", "onClick: " + key + " " + s_href.getString(key, ""));
     }
 
     public static Boolean checkBookmark(NewsClass newsClass, Context context) {
@@ -147,6 +146,7 @@ public class NewsClass {
         TextView text = dialog.findViewById(R.id.dialogTitle);
         text.setText(newsClass.getWebTitle());
         ImageView imageView = dialog.findViewById(R.id.dialogImage);
+        ImageButton twitter = dialog.findViewById(R.id.dialogTwitter);
         final ImageButton bookmark = dialog.findViewById(R.id.dialogBookmark);
         Picasso.with(context).load(newsClass.getImageUrl()).resize(1000, 600).into(imageView);
         Boolean exists = NewsClass.checkBookmark(newsClass, context);
@@ -169,16 +169,30 @@ public class NewsClass {
                         adapter.notifyItemRemoved(pos);
                         dialog.dismiss();
                     }
-//                    news.remove(pos);
-//                    adapter.notifyDataSetChanged();
-//                    adapter.notifyItemRemoved(pos);
+                    showToast(context, "\"" + newsClass.getWebTitle() + "\"" + " was removed from Bookmarks");
                 } else {
+                    showToast(context, "\"" + newsClass.getWebTitle() + "\"" + " was added to Bookmarks");
                     bookmark.setImageResource(R.drawable.baseline_bookmark_black_24dp_2x);
                 }
                 adapter.notifyDataSetChanged();
             }
         });
+
+        twitter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "https://twitter.com/intent/tweet?text=Check out this Link:&url=https://www.theguardian.com/" + newsClass.getId() + "&hashtags=CSCI571NewsSearch";
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                context.startActivity(i);
+            }
+        });
+
         dialog.show();
+    }
+
+    public static void showToast(Context context, String msg) {
+        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
     }
 
 }

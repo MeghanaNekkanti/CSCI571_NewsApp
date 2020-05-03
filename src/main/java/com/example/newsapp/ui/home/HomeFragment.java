@@ -3,12 +3,14 @@ package com.example.newsapp.ui.home;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +26,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -40,8 +43,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -53,13 +58,26 @@ public class HomeFragment extends Fragment {
 
     private View root;
     private final int REQUEST_LOCATION_PERMISSION = 1;
+    private TextView textView;
+    private ProgressBar progressBar;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_home, container, false);
         if (savedInstanceState == null)
-        root.findViewById(R.id.weather_card).setVisibility(View.GONE);
+            root.findViewById(R.id.weather_card).setVisibility(View.GONE);
+        mSwipeRefreshLayout = root.findViewById(R.id.swipe_refresh_items);
+        textView = root.findViewById(R.id.fetching);
+        progressBar = root.findViewById(R.id.progressBar);
         requestLocationPermission();
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                RequestQueue queue = Volley.newRequestQueue(getContext());
+                updateNewsList(queue, textView, progressBar);
+            }
+        });
         return root;
     }
 
@@ -90,9 +108,6 @@ public class HomeFragment extends Fragment {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, (LocationListener) getActivity());
             Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             RequestQueue queue = Volley.newRequestQueue(getActivity());
-            final TextView textView = root.findViewById(R.id.fetching);
-            ProgressBar progressBar = root.findViewById(R.id.progressBar);
-
             updateWeatherCard(location, queue, textView, progressBar);
 
         } else {
@@ -117,7 +132,6 @@ public class HomeFragment extends Fragment {
                         recyclerView.setAdapter(newsAdapter);
                         progressBar.setVisibility(View.GONE);
                         textView.setVisibility(View.GONE);
-
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -130,6 +144,7 @@ public class HomeFragment extends Fragment {
 
         queue.add(request);
         root.findViewById(R.id.weather_card).setVisibility(View.VISIBLE);
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     private void updateWeatherCard(Location location, final RequestQueue queue, final TextView textView, final ProgressBar progressBar) {
@@ -158,6 +173,15 @@ public class HomeFragment extends Fragment {
         String api_key = "b4458e11d6e5b81dd5441fa4250e9879";
         String url = "https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&units=metric&appid=" + api_key;
 
+        final HashMap<String, Integer> backgrounds = new HashMap<String, Integer>() {{
+            put("Clouds", R.drawable.cloudy_weather);
+            put("Clear", R.drawable.clear_weather);
+            put("Snow", R.drawable.snowy_weather);
+            put("Rain", R.drawable.rainy_weather);
+            put("Drizzle", R.drawable.rainy_weather);
+            put("Thunderstorm", R.drawable.thunder_weather);
+        }};
+
         JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
 
@@ -171,26 +195,10 @@ public class HomeFragment extends Fragment {
                             Integer temp = Math.round(Float.parseFloat(jsonObject0.getString("temp")));
                             temperature.setText(temp + " \u2103");
                             summary.setText(main);
-                            switch (main) {
-                                case "Clouds":
-                                    back.setBackground(getResources().getDrawable(R.drawable.cloudy_weather));
-                                    break;
-                                case "Clear":
-                                    back.setBackground(getResources().getDrawable(R.drawable.clear_weather));
-                                    break;
-                                case "Snow":
-                                    back.setBackground(getResources().getDrawable(R.drawable.snowy_weather));
-                                    break;
-                                case "Rain":
-                                case "Drizzle":
-                                    back.setBackground(getResources().getDrawable(R.drawable.rainy_weather));
-                                    break;
-                                case "Thunderstorm":
-                                    back.setBackground(getResources().getDrawable(R.drawable.thunder_weather));
-                                    break;
-                                default:
-                                    back.setBackground(getResources().getDrawable(R.drawable.sunny_weather));
-                                    break;
+                            if (backgrounds.containsKey(main)) {
+                                back.setBackground(getResources().getDrawable(backgrounds.get(main)));
+                            } else {
+                                back.setBackground(getResources().getDrawable(R.drawable.sunny_weather));
                             }
                             updateNewsList(queue, textView, progressBar);
 
