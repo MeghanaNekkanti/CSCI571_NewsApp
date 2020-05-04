@@ -61,6 +61,7 @@ public class HomeFragment extends Fragment {
     private TextView textView;
     private ProgressBar progressBar;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    NewsAdapter newsAdapter;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -127,7 +128,7 @@ public class HomeFragment extends Fragment {
                         itemDecor.setOrientation(VERTICAL);
                         RecyclerView recyclerView = root.findViewById(R.id.recyclerView);
                         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-                        NewsAdapter newsAdapter = new NewsAdapter(getActivity(), response, "HOME");
+                        newsAdapter = new NewsAdapter(getActivity(), response, "HOME");
                         recyclerView.addItemDecoration(itemDecor);
                         recyclerView.setAdapter(newsAdapter);
                         progressBar.setVisibility(View.GONE);
@@ -215,4 +216,10 @@ public class HomeFragment extends Fragment {
         queue.add(jsonRequest);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (newsAdapter != null)
+            newsAdapter.notifyDataSetChanged();
+    }
 }

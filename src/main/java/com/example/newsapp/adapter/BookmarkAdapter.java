@@ -2,8 +2,10 @@ package com.example.newsapp.adapter;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,11 +20,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.newsapp.R;
 import com.example.newsapp.model.NewsClass;
+import com.example.newsapp.ui.details.DetailsActivity;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.Serializable;
 
 public class BookmarkAdapter extends RecyclerView.Adapter {
 
@@ -93,8 +98,6 @@ public class BookmarkAdapter extends RecyclerView.Adapter {
         Boolean exists = NewsClass.checkBookmark(newsClass, context);
         if (exists) {
             holder.buttonBookmark.setImageResource(R.drawable.baseline_bookmark_black_24dp);
-        } else {
-            holder.buttonBookmark.setImageResource(R.drawable.baseline_bookmark_border_black_24dp);
         }
         // on long click
         holder.view.setOnLongClickListener(new View.OnLongClickListener() {
@@ -105,6 +108,16 @@ public class BookmarkAdapter extends RecyclerView.Adapter {
             }
         });
 
+        holder.view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, DetailsActivity.class);
+                intent.putExtra("newsClass", newsClass);
+                context.startActivity(intent);
+                notifyDataSetChanged();
+            }
+        });
+
         // bookmark button on click
         holder.buttonBookmark.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,7 +125,6 @@ public class BookmarkAdapter extends RecyclerView.Adapter {
 //                ArrayList<NewsClass> newsArray = new ArrayList<>();
                 Boolean check = NewsClass.handleStorage(newsClass, context);
                 if (check) {
-                    holder.buttonBookmark.setImageResource(R.drawable.baseline_bookmark_border_black_24dp);
                     news.remove(position);
                     notifyDataSetChanged();
                     notifyItemRemoved(position);

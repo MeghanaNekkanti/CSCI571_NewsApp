@@ -23,6 +23,7 @@ import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 
+import java.io.Serializable;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -30,12 +31,22 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class NewsClass {
+public class NewsClass implements Serializable {
     private String webTitle;
     private String id;
     private String imageUrl;
     private String sectionId;
     private String webPublicationDate;
+
+    public String getWebUrl() {
+        return webUrl;
+    }
+
+    public void setWebUrl(String webUrl) {
+        this.webUrl = webUrl;
+    }
+
+    private String webUrl;
 
     public String getWebTitle() {
         return webTitle;
@@ -86,9 +97,12 @@ public class NewsClass {
         ZoneId zoneId = ZoneId.of("America/Los_Angeles");
         ZonedDateTime laZone = date.atZone(zoneId);
 
-        if (type == "BOOKMARK") {
+        if (type.equals("BOOKMARK")) {
             Log.d("TAG", "convertDate: " + laZone + "   " + DateTimeFormatter.ofPattern("dd MMM").format(laZone));
             return DateTimeFormatter.ofPattern("dd MMM").format(laZone);
+        } else if (type.equals("DETAILS")) {
+            Log.d("TAG", "convertDate: " + laZone + "   " + DateTimeFormatter.ofPattern("dd MMM YYYY").format(laZone));
+            return DateTimeFormatter.ofPattern("dd MMM YYYY").format(laZone);
         } else {
             LocalDateTime ldt = LocalDateTime.now();
             ZonedDateTime current = ldt.atZone(zoneId);

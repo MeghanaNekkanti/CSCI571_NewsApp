@@ -26,6 +26,7 @@ import com.example.newsapp.R;
 import com.example.newsapp.adapter.NewsAdapter;
 
 import org.json.JSONArray;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,6 +40,7 @@ public class TabFragment extends Fragment {
     private TextView textView;
     private ProgressBar progressBar;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    NewsAdapter newsAdapter;
     List<String> sections = Arrays.asList("world", "business", "politics", "sport", "technology", "science");
 
     public TabFragment(int position) {
@@ -65,7 +67,7 @@ public class TabFragment extends Fragment {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                Log.d("TAG", "onRefresh: "+position);
+                Log.d("TAG", "onRefresh: " + position);
                 displaySectionNews(sections.get(position), root, getActivity());
             }
         });
@@ -96,7 +98,7 @@ public class TabFragment extends Fragment {
                         itemDecor.setOrientation(VERTICAL);
                         RecyclerView recyclerView = view.findViewById(R.id.recyclerViewTab);
                         recyclerView.setLayoutManager(new LinearLayoutManager(activity));
-                        NewsAdapter newsAdapter = new NewsAdapter(activity, response, "TAB");
+                        newsAdapter = new NewsAdapter(activity, response, "TAB");
                         recyclerView.addItemDecoration(itemDecor);
                         recyclerView.setAdapter(newsAdapter);
 //                        newsAdapter.notifyDataSetChanged();
@@ -111,5 +113,12 @@ public class TabFragment extends Fragment {
         });
         requestQueue.add(request);
         mSwipeRefreshLayout.setRefreshing(false);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (newsAdapter != null)
+            newsAdapter.notifyDataSetChanged();
     }
 }

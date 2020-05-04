@@ -2,8 +2,10 @@ package com.example.newsapp.adapter;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,12 +20,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.newsapp.R;
 import com.example.newsapp.model.NewsClass;
+import com.example.newsapp.ui.details.DetailsActivity;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.Serializable;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
@@ -74,6 +79,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
             newsClass.setId(json.getString("id"));
             newsClass.setSectionId(json.getString("sectionId"));
             newsClass.setWebTitle(json.getString("webTitle"));
+            newsClass.setWebUrl(json.getString("url"));
             Log.d("TAG", "onBindViewHolder: " + json.getString("sectionId"));
 //            newsArray.add(new NewsClass());
         } catch (JSONException e) {
@@ -97,6 +103,16 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
             public boolean onLongClick(View v) {
                 NewsClass.showDialog(newsClass, context, NewsAdapter.this, null, 0);
                 return true;
+            }
+        });
+
+        holder.view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, DetailsActivity.class);
+                intent.putExtra("newsClass", newsClass);
+                context.startActivity(intent);
+                notifyDataSetChanged();
             }
         });
 
@@ -131,7 +147,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
             newsClass.setId(json.getString("id"));
             newsClass.setSectionId(json.getString("sectionName"));
             newsClass.setWebTitle(json.getString("webTitle"));
-
+            newsClass.setWebUrl(json.getString("webUrl"));
             Log.d("TAG", "onBindViewHolder: " + json.getString("id"));
 
         } catch (JSONException e) {
@@ -160,6 +176,17 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
                 return true;
             }
         });
+
+        holder.view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("TAG", "onClick: home data");
+                Intent intent = new Intent(context, DetailsActivity.class);
+                intent.putExtra("newsClass", newsClass);
+                context.startActivity(intent);
+            }
+        });
+
         // bookmark button on click
         holder.buttonBookmark.setOnClickListener(new View.OnClickListener() {
             @Override

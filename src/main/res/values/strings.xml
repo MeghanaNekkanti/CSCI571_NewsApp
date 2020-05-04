@@ -9,5 +9,8 @@
     <string name="text_location_permission">Allloww</string>
     <string name="title_location_permission">Title</string>
     <string name="ok">Allow</string>
-    <string name="progess">Fetching News</string>
+    <string name="progress">Fetching News</string>
+    <string name="action_bookmark">action_bookmark</string>
+    <string name="action_twitter">twitter</string>
+    <string name="view_full_article"><u>View Full Article</u></string>
 </resources>
