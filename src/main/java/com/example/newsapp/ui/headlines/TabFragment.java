@@ -101,6 +101,7 @@ public class TabFragment extends Fragment {
                         newsAdapter = new NewsAdapter(activity, response, "TAB");
                         recyclerView.addItemDecoration(itemDecor);
                         recyclerView.setAdapter(newsAdapter);
+                        mSwipeRefreshLayout.setRefreshing(false);
 //                        newsAdapter.notifyDataSetChanged();
                     }
                 }, new Response.ErrorListener() {
@@ -108,11 +109,11 @@ public class TabFragment extends Fragment {
             public void onErrorResponse(VolleyError error) {
                 progressBar.setVisibility(View.GONE);
                 textView.setVisibility(View.GONE);
+                mSwipeRefreshLayout.setRefreshing(false);
                 Log.e("Volley", "Error" + error);
             }
         });
         requestQueue.add(request);
-        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     @Override

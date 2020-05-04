@@ -133,19 +133,20 @@ public class HomeFragment extends Fragment {
                         recyclerView.setAdapter(newsAdapter);
                         progressBar.setVisibility(View.GONE);
                         textView.setVisibility(View.GONE);
+                        mSwipeRefreshLayout.setRefreshing(false);
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 progressBar.setVisibility(View.GONE);
                 textView.setVisibility(View.GONE);
+                mSwipeRefreshLayout.setRefreshing(false);
                 Log.e("Volley", "Error" + error);
             }
         });
 
         queue.add(request);
         root.findViewById(R.id.weather_card).setVisibility(View.VISIBLE);
-        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     private void updateWeatherCard(Location location, final RequestQueue queue, final TextView textView, final ProgressBar progressBar) {

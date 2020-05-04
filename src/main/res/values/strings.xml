@@ -6,11 +6,13 @@
     <string name="title_bookmarks">Bookmarks</string>
     <string name="enter">Enter Search Term :</string>
     <string name="no_bookmark">No Bookmarked Articles</string>
-    <string name="text_location_permission">Allloww</string>
+    <string name="text_location_permission">Allow</string>
     <string name="title_location_permission">Title</string>
     <string name="ok">Allow</string>
     <string name="progress">Fetching News</string>
-    <string name="action_bookmark">action_bookmark</string>
-    <string name="action_twitter">twitter</string>
+    <string name="action_bookmark">Bookmark</string>
+    <string name="action_twitter">Twitter</string>
     <string name="view_full_article"><u>View Full Article</u></string>
+    <string name="action_search">Search</string>
+    <string name="search_hint">search</string>
 </resources>

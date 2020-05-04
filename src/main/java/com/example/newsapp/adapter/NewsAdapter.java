@@ -56,10 +56,15 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        if (type.equals("HOME"))
-            loadHomeData(holder, position);
-        else if (type.equals("TAB"))
-            loadSectionData(holder, position);
+        switch (type) {
+            case "HOME":
+                loadHomeData(holder, position);
+                break;
+            case "TAB":
+            case "SEARCH":
+                loadSectionData(holder, position);
+                break;
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -88,7 +93,11 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
         holder.textSection.setText(newsClass.getSectionId());
         holder.textTitle.setText(newsClass.getWebTitle());
-        String time = NewsClass.convertDate(newsClass.getWebPublicationDate(), "NEWS");
+        String time;
+        if (type.equals("SEARCH"))
+            time = NewsClass.convertDate(newsClass.getWebPublicationDate(), type);
+        else
+            time = NewsClass.convertDate(newsClass.getWebPublicationDate(), "NEWS");
         holder.textTime.setText(time);
         Picasso.with(context).load(newsClass.getImageUrl()).resize(350, 350).into(holder.image);
         Boolean exists = NewsClass.checkBookmark(newsClass, context);
@@ -157,7 +166,6 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         holder.textSection.setText(newsClass.getSectionId());
         holder.textTitle.setText(newsClass.getWebTitle());
         String time = NewsClass.convertDate(newsClass.getWebPublicationDate(), "NEWS");
-        holder.textTime.setText(time);
         holder.textTime.setText(time);
         Picasso.with(context).load(newsClass.getImageUrl()).resize(350, 350).into(holder.image);
 

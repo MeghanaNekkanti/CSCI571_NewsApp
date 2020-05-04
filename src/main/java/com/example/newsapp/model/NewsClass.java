@@ -104,21 +104,35 @@ public class NewsClass implements Serializable {
             Log.d("TAG", "convertDate: " + laZone + "   " + DateTimeFormatter.ofPattern("dd MMM YYYY").format(laZone));
             return DateTimeFormatter.ofPattern("dd MMM YYYY").format(laZone);
         } else {
+
             LocalDateTime ldt = LocalDateTime.now();
             ZonedDateTime current = ldt.atZone(zoneId);
             Duration diff = Duration.between(laZone.toInstant(), current.toInstant());
-//        String output = diff.toString();
             int minutes = (int) ((diff.getSeconds() % (60 * 60)) / 60);
             int seconds = (int) (diff.getSeconds() % 60);
             long hours = diff.toHours();
-            Log.d("TAG", "convertDate: " + diff + " " + hours + " " + minutes + " " + seconds);
-            if (hours >= 1)
-                timeText = hours + "h ago";
-            else if (minutes >= 1 && hours < 1)
-                timeText = minutes + "m ago";
-            else if (minutes < 1)
-                timeText = seconds + "s ago";
-            return timeText;
+            long days = diff.toDays();
+
+            if (type.equals("SEARCH")) {
+                Log.d("TAG", "convertDate: " + diff.toDays() + " " + hours + " " + minutes + " " + seconds);
+                if (hours > 24)
+                    timeText = days + "d ago";
+                else if (hours >= 1)
+                    timeText = hours + "h ago";
+                else if (minutes >= 1 && hours < 1)
+                    timeText = minutes + "m ago";
+                else if (minutes < 1)
+                    timeText = seconds + "s ago";
+                return timeText;
+            } else {
+                if (hours >= 1)
+                    timeText = hours + "h ago";
+                else if (minutes >= 1 && hours < 1)
+                    timeText = minutes + "m ago";
+                else if (minutes < 1)
+                    timeText = seconds + "s ago";
+                return timeText;
+            }
         }
     }
 

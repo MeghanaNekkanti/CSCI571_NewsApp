@@ -161,7 +161,7 @@ public class DetailsActivity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
-        onBackPressed();
+        this.finish();
         return true;
     }
 

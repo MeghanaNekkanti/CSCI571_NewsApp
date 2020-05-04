@@ -5,12 +5,13 @@
         android:id="@+id/action_bookmark"
         android:icon="@drawable/baseline_bookmark_border_black_24dp_2x"
         android:title="@string/action_bookmark"
-        app:iconTint="#ff0000"
+        app:iconTint="@android:color/holo_red_light"
         app:showAsAction="ifRoom" />
 
     <!-- Settings, should always be in the overflow -->
     <item
         android:id="@+id/action_twitter"
+        android:background="@android:color/white"
         android:icon="@drawable/bluetwitter"
         android:title="@string/action_twitter"
         app:showAsAction="ifRoom" />
