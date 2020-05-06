@@ -117,7 +117,7 @@ public class HomeFragment extends Fragment {
 
     private void updateNewsList(RequestQueue queue, final TextView textView, final ProgressBar progressBar) {
 
-        String url = "http://10.0.2.2:5000/guardianlatestnews";
+        String url = "https://api-dot-news-app-android-nodejs.ue.r.appspot.com/guardianlatestnews";
         final JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONArray>() {
                     @Override

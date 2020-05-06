@@ -74,7 +74,7 @@ public class SearchResultsActivity extends AppCompatActivity {
         fetch.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.VISIBLE);
 
-        String url = "http://10.0.2.2:5000/guardiansearch?q=" + query;
+        String url = "https://api-dot-news-app-android-nodejs.ue.r.appspot.com/guardiansearch?q=" + query;
         final JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONArray>() {
                     @Override
@@ -105,6 +105,7 @@ public class SearchResultsActivity extends AppCompatActivity {
     @Override
     public boolean onSupportNavigateUp() {
         this.finish();
+        onBackPressed();
         return true;
     }
 

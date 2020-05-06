@@ -1,5 +1,6 @@
 package com.example.newsapp.ui.trending;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,6 +8,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -64,6 +66,8 @@ public class TrendingFragment extends Fragment {
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
                         (keyCode == KeyEvent.KEYCODE_ENTER)) {
                     // Perform action on key press
+                    InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(keyword.getWindowToken(), 0);
                     setValue(keyword.getText().toString());
                     getEntries(root);
                     return true;
@@ -87,7 +91,7 @@ public class TrendingFragment extends Fragment {
         RequestQueue queue = Volley.newRequestQueue(getActivity());
         Log.d("TAG", "onCreateView: " + getValue());
 
-        String url = "http://10.0.2.2:5000/latesttrends?keyword=" + getValue();
+        String url = "https://api-dot-news-app-android-nodejs.ue.r.appspot.com/latesttrends?keyword=" + getValue();
 
         JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {

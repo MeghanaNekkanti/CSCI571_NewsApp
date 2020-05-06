@@ -85,7 +85,7 @@ public class DetailsActivity extends AppCompatActivity {
         fetch.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.VISIBLE);
 
-        String url = "http://10.0.2.2:5000/guardiandetails?id=" + article_id;
+        String url = "https://api-dot-news-app-android-nodejs.ue.r.appspot.com/guardiandetails?id=" + article_id;
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
@@ -161,6 +161,7 @@ public class DetailsActivity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
+        onBackPressed();
         this.finish();
         return true;
     }

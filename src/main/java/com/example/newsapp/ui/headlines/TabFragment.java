@@ -85,7 +85,7 @@ public class TabFragment extends Fragment {
 
         RequestQueue requestQueue = Volley.newRequestQueue(activity);
 
-        String url = "http://10.0.2.2:5000/guardiansection?section=" + section;
+        String url = "https://api-dot-news-app-android-nodejs.ue.r.appspot.com/guardiansection?section=" + section;
         Log.d("TAG", "displaySectionNews: " + section);
         final JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONArray>() {

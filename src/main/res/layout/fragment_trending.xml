@@ -31,7 +31,6 @@
         android:ems="10"
         android:hint="CoronaVirus"
         android:inputType="textPersonName"
-        android:textCursorDrawable="@drawable/color_cursor"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textView" />
 

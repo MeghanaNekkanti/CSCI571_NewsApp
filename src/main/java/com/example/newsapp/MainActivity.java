@@ -217,6 +217,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     @Override
     public boolean onSupportNavigateUp() {
         this.finish();
+        onBackPressed();
         return true;
     }
 }
