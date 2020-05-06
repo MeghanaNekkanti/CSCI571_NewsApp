@@ -46,8 +46,7 @@ public class BookmarksFragment extends Fragment {
 //            textView.setText(R.string.no_bookmark);
 //        } else {
         root = inflater.inflate(R.layout.fragment_bookmarks, container, false);
-        DividerItemDecoration itemDecor = new DividerItemDecoration(getContext(), HORIZONTAL);
-        itemDecor.setOrientation(VERTICAL);
+        DividerItemDecoration itemDecor = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
         recyclerView = root.findViewById(R.id.recyclerViewBookmark);
         GridLayoutManager mLayoutManager = new GridLayoutManager(getActivity(), 2);
         mLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {

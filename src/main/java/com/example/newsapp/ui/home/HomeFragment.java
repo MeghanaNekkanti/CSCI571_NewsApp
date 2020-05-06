@@ -92,7 +92,6 @@ public class HomeFragment extends Fragment {
     private void requestLocationPermission() {
         String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION};
         if (EasyPermissions.hasPermissions(getContext(), perms)) {
-            Toast.makeText(getContext(), "Permission already granted", Toast.LENGTH_SHORT).show();
             LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
             if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -124,8 +123,7 @@ public class HomeFragment extends Fragment {
                     @Override
                     public void onResponse(JSONArray response) {
                         Log.d("TAG", "onResponse: " + response);
-                        DividerItemDecoration itemDecor = new DividerItemDecoration(getActivity(), HORIZONTAL);
-                        itemDecor.setOrientation(VERTICAL);
+                        DividerItemDecoration itemDecor = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL);
                         RecyclerView recyclerView = root.findViewById(R.id.recyclerView);
                         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
                         newsAdapter = new NewsAdapter(getActivity(), response, "HOME");

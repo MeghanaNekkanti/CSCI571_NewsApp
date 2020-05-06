@@ -30,7 +30,7 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 
-public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
+public class NewsAdapter extends RecyclerView.Adapter {
 
     private LayoutInflater layoutInflater;
     JSONArray news;
@@ -47,22 +47,37 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
-        view = layoutInflater.inflate(R.layout.single_card, parent, false);
-        return new ViewHolder(view);
+        switch (viewType) {
+            case 0:
+                view = layoutInflater.inflate(R.layout.empty_bookmark, parent, false);
+                TextView text = view.findViewById(R.id.text_no_bookmark);
+                text.setText(R.string.no_search);
+                return new EmptyViewHolder(view);
+            case 1:
+                view = layoutInflater.inflate(R.layout.single_card, parent, false);
+                return new ViewHolder(view);
+        }
+        return null;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         switch (type) {
             case "HOME":
-                loadHomeData(holder, position);
+                loadHomeData((ViewHolder) holder, position);
                 break;
             case "TAB":
+                loadSectionData((ViewHolder) holder, position);
+                break;
             case "SEARCH":
-                loadSectionData(holder, position);
+                if (news.length() == 0) {
+                    Log.d("TAG", "onBindViewHolder: Empty");
+                } else {
+                    loadSectionData((ViewHolder) holder, position);
+                }
                 break;
         }
     }
@@ -82,16 +97,16 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
             newsClass.setImageUrl(url);
             newsClass.setWebPublicationDate(json.getString("webPublicationDate"));
             newsClass.setId(json.getString("id"));
-            newsClass.setSectionId(json.getString("sectionId"));
+            newsClass.setSectionName(json.getString("sectionName"));
             newsClass.setWebTitle(json.getString("webTitle"));
             newsClass.setWebUrl(json.getString("url"));
-            Log.d("TAG", "onBindViewHolder: " + json.getString("sectionId"));
+            Log.d("TAG", "onBindViewHolder: " + json.getString("sectionName"));
 //            newsArray.add(new NewsClass());
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        holder.textSection.setText(newsClass.getSectionId());
+        holder.textSection.setText(newsClass.getSectionName());
         holder.textTitle.setText(newsClass.getWebTitle());
         String time;
         if (type.equals("SEARCH"))
@@ -154,7 +169,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
             newsClass.setImageUrl(url);
             newsClass.setWebPublicationDate(json.getString("webPublicationDate"));
             newsClass.setId(json.getString("id"));
-            newsClass.setSectionId(json.getString("sectionName"));
+            newsClass.setSectionName(json.getString("sectionName"));
             newsClass.setWebTitle(json.getString("webTitle"));
             newsClass.setWebUrl(json.getString("webUrl"));
             Log.d("TAG", "onBindViewHolder: " + json.getString("id"));
@@ -163,7 +178,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
             e.printStackTrace();
         }
 
-        holder.textSection.setText(newsClass.getSectionId());
+        holder.textSection.setText(newsClass.getSectionName());
         holder.textTitle.setText(newsClass.getWebTitle());
         String time = NewsClass.convertDate(newsClass.getWebPublicationDate(), "NEWS");
         holder.textTime.setText(time);
@@ -207,7 +222,21 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
+        if (news.length() == 0)
+            return 1;
         return news.length();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+
+        int b = news.length();
+        Log.d("TAG", "getItemViewType: " + b);
+        if (b == 0) {
+            return 0;
+        } else {
+            return 1;
+        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -234,6 +263,16 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
             image = itemView.findViewById(R.id.imageView);
             image.setEnabled(false);
             image.setOnClickListener(null);
+        }
+    }
+
+    public static class EmptyViewHolder extends RecyclerView.ViewHolder {
+
+        TextView noBookmark;
+
+        public EmptyViewHolder(View itemView) {
+            super(itemView);
+            noBookmark = itemView.findViewById(R.id.text_no_bookmark);
         }
     }
 }

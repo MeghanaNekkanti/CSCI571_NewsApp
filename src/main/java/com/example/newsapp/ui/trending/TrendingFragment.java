@@ -54,7 +54,7 @@ public class TrendingFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_trending, container, false);
-        setValue("CoronaVirus");
+        setValue("Coronavirus");
         Log.d("TAG", "onCreateView: trending");
         final EditText keyword = root.findViewById(R.id.searchText);
         TextView tv = root.findViewById(R.id.textView);
@@ -80,9 +80,9 @@ public class TrendingFragment extends Fragment {
         lineEntries = new ArrayList<Entry>();
         String key = getValue();
         if (key == null) {
-            setValue("CoronaVirus");
+            setValue("Coronavirus");
         } else if (key.equals("")) {
-            setValue("CoronaVirus");
+            setValue("Coronavirus");
         }
         RequestQueue queue = Volley.newRequestQueue(getActivity());
         Log.d("TAG", "onCreateView: " + getValue());
@@ -101,7 +101,8 @@ public class TrendingFragment extends Fragment {
                                 lineEntries.add(new Entry(i, y));
                             }
                             Log.d("TAG", "onResponse: " + responseJSONArray);
-                            int color = Color.parseColor("#906200EE");
+                            int color = Color.parseColor("#7B7AC2");
+//                            int color = R.color.colorPrimary;
                             lineDataSet = new LineDataSet(lineEntries, "Trending Chart for " + getValue());
                             lineData = new LineData(lineDataSet);
                             lineChart = root.findViewById(R.id.lineChart);
@@ -111,7 +112,7 @@ public class TrendingFragment extends Fragment {
                             lineDataSet.setValueTextColor(color);
                             lineDataSet.setValueTextSize(10f);
                             lineDataSet.setDrawCircleHole(false);
-                            lineDataSet.setCircleColor(color);
+                            lineDataSet.setCircleColor(Color.parseColor("#6200EE"));
                             lineDataSet.setLineWidth(1f);
 
                             lineChart.getAxisLeft().setDrawGridLines(false);
@@ -120,8 +121,8 @@ public class TrendingFragment extends Fragment {
                             lineChart.getAxisLeft().setDrawAxisLine(false);
 
                             Legend legend = lineChart.getLegend();
-                            legend.setTextSize(15f);
-                            legend.setFormSize(15f);
+                            legend.setTextSize(16f);
+                            legend.setFormSize(16f);
 
                             lineChart.notifyDataSetChanged();
                             lineChart.invalidate();

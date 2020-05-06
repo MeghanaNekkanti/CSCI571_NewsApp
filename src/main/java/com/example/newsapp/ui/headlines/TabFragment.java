@@ -94,8 +94,7 @@ public class TabFragment extends Fragment {
 //                        Log.d("TAG", "onResponse: " + response);
                         progressBar.setVisibility(View.GONE);
                         textView.setVisibility(View.GONE);
-                        DividerItemDecoration itemDecor = new DividerItemDecoration(activity, HORIZONTAL);
-                        itemDecor.setOrientation(VERTICAL);
+                        DividerItemDecoration itemDecor = new DividerItemDecoration(activity, DividerItemDecoration.VERTICAL);
                         RecyclerView recyclerView = view.findViewById(R.id.recyclerViewTab);
                         recyclerView.setLayoutManager(new LinearLayoutManager(activity));
                         newsAdapter = new NewsAdapter(activity, response, "TAB");

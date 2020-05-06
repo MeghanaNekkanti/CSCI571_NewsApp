@@ -49,6 +49,8 @@ public class BookmarkAdapter extends RecyclerView.Adapter {
         switch (viewType) {
             case 0:
                 view = layoutInflater.inflate(R.layout.empty_bookmark, parent, false);
+                TextView text = view.findViewById(R.id.text_no_bookmark);
+                text.setText(R.string.no_bookmark);
                 return new EmptyViewHolder(view);
             case 1:
                 view = layoutInflater.inflate(R.layout.bookmark_card, parent, false);
@@ -83,12 +85,12 @@ public class BookmarkAdapter extends RecyclerView.Adapter {
             newsClass.setImageUrl(url);
             newsClass.setWebPublicationDate(json.getString("webPublicationDate"));
             newsClass.setId(json.getString("id"));
-            newsClass.setSectionId(json.getString("sectionId"));
+            newsClass.setSectionName(json.getString("sectionName"));
             newsClass.setWebTitle(json.getString("webTitle"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        holder.textSection.setText(newsClass.getSectionId());
+        holder.textSection.setText(newsClass.getSectionName());
         holder.textTitle.setText(newsClass.getWebTitle());
         String time = NewsClass.convertDate(newsClass.getWebPublicationDate(), "BOOKMARK");
         holder.textTime.setText(time);

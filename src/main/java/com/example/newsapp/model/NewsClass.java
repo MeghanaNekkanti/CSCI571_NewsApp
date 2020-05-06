@@ -35,7 +35,7 @@ public class NewsClass implements Serializable {
     private String webTitle;
     private String id;
     private String imageUrl;
-    private String sectionId;
+    private String sectionName;
     private String webPublicationDate;
 
     public String getWebUrl() {
@@ -72,12 +72,12 @@ public class NewsClass implements Serializable {
         this.imageUrl = imageUrl;
     }
 
-    public String getSectionId() {
-        return sectionId;
+    public String getSectionName() {
+        return sectionName;
     }
 
-    public void setSectionId(String sectionId) {
-        this.sectionId = sectionId;
+    public void setSectionName(String sectionId) {
+        this.sectionName = sectionId;
     }
 
     public String getWebPublicationDate() {

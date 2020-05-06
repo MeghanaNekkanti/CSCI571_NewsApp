@@ -80,11 +80,7 @@ public class SearchResultsActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONArray response) {
                         Log.d("TAG", "onResponse: " + response);
-                        DividerItemDecoration itemDecor = new DividerItemDecoration(searchResultsActivity, HORIZONTAL);
-                        itemDecor.setOrientation(VERTICAL);
-                        ArrayList<String> items = new ArrayList<>();
-                        items.add("First");
-                        items.add("Second");
+                        DividerItemDecoration itemDecor = new DividerItemDecoration(searchResultsActivity, DividerItemDecoration.VERTICAL);
                         RecyclerView recyclerView = findViewById(R.id.recyclerViewSearch);
                         recyclerView.setLayoutManager(new LinearLayoutManager(searchResultsActivity));
                         newsAdapter = new NewsAdapter(searchResultsActivity, response, "SEARCH");

@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        searchView.setMaxWidth(Integer.MAX_VALUE);
+        searchView.setMaxWidth(1150);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
         final SearchView.SearchAutoComplete searchAutoComplete = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
